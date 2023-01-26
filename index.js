@@ -12,4 +12,4 @@ server.listen(config.PORT, (error) => {
         // console.log('error starting app on port ', config.PORT);
         logger.error('error starting app on port ', config.PORT);
     }
-})
+});
