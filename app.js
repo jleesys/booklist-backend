@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const booksRouter = require('./controller/books');
 const config = require('./util/config');
 const cors = require('cors');
+require('dotenv').config();
 const middleware = require('./util/middleware');
 const logger = require('./util/logger');
 
@@ -17,7 +18,9 @@ mongoose.connect(config.MONGODB_URI)
 
 app.use(cors());
 app.use(express.json());
-app.use(middleware.requestLogger);
+if (process.env.NODE_ENV !== 'test') {
+    app.use(middleware.requestLogger);
+}
 app.use('/api/books/', booksRouter);
 
 module.exports = app;
