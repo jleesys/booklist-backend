@@ -6,7 +6,20 @@ booksRouter.get('/', async (request, response, next) => {
     try {
         const books = await Book.find({});
         response.json(books);
-    } catch(exception) {
+    } catch (exception) {
+        next(exception);
+    }
+});
+booksRouter.get('/:id', async (request, response, next) => {
+    try {
+        const id = request.params.id;
+        const foundBook = await Book.findById(id);
+        if (foundBook) {
+            response.json(foundBook);
+        } else {
+            response.status(404).json({ error: 'not found' });
+        }
+    } catch (exception) {
         next(exception);
     }
 });
@@ -21,7 +34,7 @@ booksRouter.post('/', async (request, response, next) => {
         });
         const savedBook = await book.save();
         response.status(201).json(savedBook);
-    } catch(exception) {
+    } catch (exception) {
         next(exception);
     }
 });
