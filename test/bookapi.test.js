@@ -56,7 +56,7 @@ describe('Blog API', function () {
             expect(getById.body.id).toBe(id);
             expect(getById.body.title).toBe('The World of Wasps');
         });
-    })
+    });
     describe('post', function () {
         test('able to submit a book', async () => {
             const newBook = {
@@ -76,7 +76,6 @@ describe('Blog API', function () {
             expect(response.body.title).toBe('The World of Wasps');
         });
     });
-    // TO BE IMPLEMENTED
     // for future: response.body vs response.data?
     describe('put', function () {
         let idForTestBook;
@@ -100,19 +99,37 @@ describe('Blog API', function () {
                 isbn: '69696969',
                 progress: 1000
             };
-            // console.log('sending request to id ', idForTestBook);
             const response = await api
                 .put(`/api/books/${idForTestBook}`)
                 .send(updatedBook)
                 .expect(200);
-            // console.log('test response ', response);
             const booksAtEnd = await Book.find({});
-            // console.log('books at end ', booksAtEnd);
-            // const bookToFind = booksAtEnd.filter(book => book.id === idForTestBook);
-            // console.log(bookToFind);
             const newBook = booksAtEnd.filter(book => book.id === idForTestBook)[0];
             expect(response.body.progress).toBe(1000);
             expect(newBook.progress).toBe(1000);
+        });
+    });
+    describe('delete', function () {
+        let idForTestBook;
+        beforeEach(async () => {
+            const testBook = {
+                title: 'Deleted Book',
+                author: 'Mr Test',
+                isbn: '69696969',
+            }
+            const response = await api
+                .post('/api/books')
+                .send(testBook)
+                .expect(201);
+            idForTestBook = response.body.id;
+        });
+        test('able to delete a book', async function () {
+            const response = await api
+                .delete(`/api/books/${idForTestBook}`)
+                .expect(200);
+            const booksAtEnd = await api.get('/api/books');
+            const bookNamesEnd = booksAtEnd.body.map(book => book.title);
+            expect(bookNamesEnd).not.toContain('Deleted Book');
         });
     });
 });

@@ -64,6 +64,20 @@ booksRouter.put('/:id', async (request, response, next) => {
         next(exception);
     }
 });
+booksRouter.delete('/:id', async (request, response, next) => {
+    try {
+        const id = request.params.id;
+        const deletedBook = await Book.findByIdAndDelete(id);
+        // console.log('deleted book from db ', deletedBook);
+        if (deletedBook) {
+            response.status(200).json(deletedBook);
+        } else {
+            response.status(400).json({ error: 'error deleting book'});
+        }
+    } catch (exception) {
+        next(exception);
+    }
+});
 
 
 // booksRouter.post();
