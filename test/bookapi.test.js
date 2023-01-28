@@ -36,10 +36,10 @@ describe('Blog API', function () {
     });
     describe('get', function () {
         test('gets all books', async () => {
-        // const response = await Book.find({});
+            // const response = await Book.find({});
             const response =
-            await api
-                .get('/api/books');
+                await api
+                    .get('/api/books');
             expect(response.body).toHaveLength(3);
         });
         test('able to get book by id', async () => {
@@ -74,6 +74,45 @@ describe('Blog API', function () {
                 .get('/api/books');
             expect(getAll.body).toHaveLength(4);
             expect(response.body.title).toBe('The World of Wasps');
+        });
+    });
+    // TO BE IMPLEMENTED
+    // for future: response.body vs response.data?
+    describe('put', function () {
+        let idForTestBook;
+        beforeEach(async () => {
+            const testBook = {
+                title: 'Le Test Book 2',
+                author: 'Mr Test',
+                isbn: '69696969',
+            }
+            const response = await api
+                .post('/api/books')
+                .send(testBook)
+                .expect(201);
+            idForTestBook = response.body.id;
+            // console.log(idForTestBook);
+        });
+        test('able to update book progress', async () => {
+            const updatedBook = {
+                title: 'Le Test Book 2',
+                author: 'Mr Test',
+                isbn: '69696969',
+                progress: 1000
+            };
+            // console.log('sending request to id ', idForTestBook);
+            const response = await api
+                .put(`/api/books/${idForTestBook}`)
+                .send(updatedBook)
+                .expect(200);
+            // console.log('test response ', response);
+            const booksAtEnd = await Book.find({});
+            // console.log('books at end ', booksAtEnd);
+            // const bookToFind = booksAtEnd.filter(book => book.id === idForTestBook);
+            // console.log(bookToFind);
+            const newBook = booksAtEnd.filter(book => book.id === idForTestBook)[0];
+            expect(response.body.progress).toBe(1000);
+            expect(newBook.progress).toBe(1000);
         });
     });
 });

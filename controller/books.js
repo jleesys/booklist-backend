@@ -38,6 +38,32 @@ booksRouter.post('/', async (request, response, next) => {
         next(exception);
     }
 });
+booksRouter.put('/:id', async (request, response, next) => {
+    try {
+        // console.log('hit', request.body);
+        const id = request.params.id;
+        const progressReplace = request.body.progress;
+        const foundBook = await Book.findById(id);
+        if (foundBook) {
+            foundBook.progress = progressReplace;
+            // console.log('replacement book', foundBook);
+            // console.log('be: finding book of id ', id);
+            const newBook = await Book.findByIdAndUpdate(id, foundBook, { new: true });
+            // console.log('response', response);
+            // console.log('updated book', response);
+            if (newBook) {
+                return response.status(200).json(newBook);
+            } else {
+                return response.status(400).end();
+            }
+        } else {
+            return response.status(404).json({ error: 'not found' });
+        }
+        // console.log('finished save', response.body);
+    } catch (exception) {
+        next(exception);
+    }
+});
 
 
 // booksRouter.post();
