@@ -34,42 +34,46 @@ describe('Blog API', function () {
             await book.save();
         }
     });
-    test('gets all books', async () => {
+    describe('get', function () {
+        test('gets all books', async () => {
         // const response = await Book.find({});
-        const response =
+            const response =
             await api
                 .get('/api/books');
-        expect(response.body).toHaveLength(3);
-    });
-    test('able to submit a book', async () => {
-        const newBook = {
-            title: 'The World of Wasps',
-            author: 'Wasp B. Mad',
-            isbn: '9999999'
-        };
-        // const response = await newBook.save();
-        // const getAll = await Book.find({});
-        const response = await api
-            .post('/api/books')
-            .send(newBook)
-            .expect(201);
-        const getAll = await api
-            .get('/api/books');
-        expect(getAll.body).toHaveLength(4);
-        expect(response.body.title).toBe('The World of Wasps');
-    });
-    test('able to book by id', async () => {
-        const newBook = new Book({
-            title: 'The World of Wasps',
-            author: 'Wasp B. Mad',
-            isbn: '9999999'
+            expect(response.body).toHaveLength(3);
         });
-        const response = await newBook.save();
-        const id = response.id;
-        const getById = await api
-            .get(`/api/books/${id}`)
-            .expect(200);
-        expect(getById.body.id).toBe(id);
-        expect(getById.body.title).toBe('The World of Wasps');
+        test('able to get book by id', async () => {
+            const newBook = new Book({
+                title: 'The World of Wasps',
+                author: 'Wasp B. Mad',
+                isbn: '9999999'
+            });
+            const response = await newBook.save();
+            const id = response.id;
+            const getById = await api
+                .get(`/api/books/${id}`)
+                .expect(200);
+            expect(getById.body.id).toBe(id);
+            expect(getById.body.title).toBe('The World of Wasps');
+        });
+    })
+    describe('post', function () {
+        test('able to submit a book', async () => {
+            const newBook = {
+                title: 'The World of Wasps',
+                author: 'Wasp B. Mad',
+                isbn: '9999999'
+            };
+            // const response = await newBook.save();
+            // const getAll = await Book.find({});
+            const response = await api
+                .post('/api/books')
+                .send(newBook)
+                .expect(201);
+            const getAll = await api
+                .get('/api/books');
+            expect(getAll.body).toHaveLength(4);
+            expect(response.body.title).toBe('The World of Wasps');
+        });
     });
 });
